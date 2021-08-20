@@ -1,0 +1,6 @@
+name: 'PR title matcher'
+description: 'Match the title of a pull request against a regex and retrieve the matched groups'
+author: 'invakid404'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
