@@ -1,0 +1,55 @@
+{
+  "name": "pr-validator-action",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Validate that a pull request follows a set of rules",
+  "main": "lib/main.js",
+  "scripts": {
+    "build": "tsc",
+    "codegen": "graphql-codegen --config codegen.yml",
+    "format": "prettier --write \"**/*.ts\"",
+    "format-check": "prettier --check \"**/*.ts\"",
+    "lint": "eslint \"src/**/*.ts\"",
+    "package": "ncc build --source-map --license licenses.txt",
+    "all": "npm run codegen && npm run build && npm run format && npm run lint && npm run package"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/senteca/pr-validator-action.git"
+  },
+  "keywords": [
+    "actions",
+    "node",
+    "setup"
+  ],
+  "author": "invakid404 <invakid404@riseup.net>",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.4.0",
+    "@actions/github": "^5.0.0",
+    "@octokit/graphql": "^4.6.4",
+    "graphql": "^15.5.1",
+    "jira-client": "^6.22.0",
+    "json-to-graphql-query": "^2.1.0",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "2.0.1",
+    "@graphql-codegen/typescript": "2.0.0",
+    "@graphql-codegen/typescript-document-nodes": "2.0.0",
+    "@graphql-codegen/typescript-resolvers": "2.0.0",
+    "@octokit/graphql-schema": "^10.60.1",
+    "@types/jira-client": "^6.21.2",
+    "@types/lodash": "^4.14.172",
+    "@types/node": "^16.6.1",
+    "@typescript-eslint/parser": "^4.29.1",
+    "@vercel/ncc": "^0.29.1",
+    "eslint": "^7.32.0",
+    "eslint-plugin-github": "^4.2.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "js-yaml": "^4.1.0",
+    "prettier": "2.3.2",
+    "ts-node": "^10.2.0",
+    "typescript": "^4.3.5"
+  }
+}

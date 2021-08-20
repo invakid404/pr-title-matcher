@@ -1,0 +1,31 @@
+name: 'PR Validator'
+description: 'Validate that a pull request follows a set of rules'
+author: 'invakid404'
+inputs:
+  configPath:
+    required: true
+    description: 'Path to the config JSON file'
+  actionOnBadTitle:
+    required: false
+    description: "Action to take when title doesn't match regex"
+    default: "label"
+  actionOnBadTicket:
+    required: false
+    description: "Action to take when ticket isn't valid"
+    default: "label"
+  actionOnBadBranch:
+    required: false
+    description: "Action to take when branch name isn't valid"
+    default: "close"
+  jiraHost:
+    required: true
+    description: "Hostname of Jira instance"
+  jiraUsername:
+    required: true
+    description: "Username to use for Jira"
+  jiraPassword:
+    required: true
+    description: "Password/token to use for Jira"
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
