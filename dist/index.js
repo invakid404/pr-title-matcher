@@ -144,22 +144,24 @@ const labels_1 = __nccwpck_require__(3579);
         core.info('No pull request found, exiting.');
         return;
     }
-    const { node_id: id, title } = github.context.payload.pull_request;
+    const { node_id: id, title, labels } = github.context.payload.pull_request;
     const regexPattern = core.getInput('regex', { required: true });
     const regexFlags = core.getInput('flags');
     const label = core.getInput('label');
-    core.info(`label ${label}`);
     const regex = new RegExp(regexPattern, regexFlags);
     const res = regex.exec(title);
     if (!res) {
         if (label) {
-            core.info(`adding label to ${id}`);
             await labels_1.addLabelByName({ id }, label);
         }
         core.setFailed("PR title doesn't match!");
         return;
     }
     Object.entries((_a = res.groups) !== null && _a !== void 0 ? _a : {}).forEach(([groupName, groupVal]) => core.setOutput(groupName, groupVal));
+    const hasLabel = label && labels.some((curr) => curr.name === label);
+    if (hasLabel) {
+        await labels_1.removeLabelByName({ id }, label);
+    }
 })();
 
 
