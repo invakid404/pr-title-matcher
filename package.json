@@ -38,7 +38,7 @@
     "@graphql-codegen/typescript": "2.0.0",
     "@graphql-codegen/typescript-document-nodes": "2.0.0",
     "@graphql-codegen/typescript-resolvers": "2.0.0",
-    "@octokit/graphql-schema": "^10.60.1",
+    "@octokit/graphql-schema": "^10.63.0",
     "@types/jira-client": "^6.21.2",
     "@types/lodash": "^4.14.172",
     "@types/node": "^16.6.1",
