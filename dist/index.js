@@ -53,7 +53,7 @@ const getAllLabelsByName = async (labelName) => {
             },
         },
     };
-    const { repository: { labels }, } = await octokit_1.octokit(json_to_graphql_query_1.jsonToGraphQLQuery(request));
+    const { repository: { labels }, } = await (0, octokit_1.octokit)((0, json_to_graphql_query_1.jsonToGraphQLQuery)(request));
     return (_b = (_a = labels === null || labels === void 0 ? void 0 : labels.nodes) === null || _a === void 0 ? void 0 : _a.filter(utils_1.notEmpty)) !== null && _b !== void 0 ? _b : [];
 };
 exports.getAllLabelsByName = getAllLabelsByName;
@@ -62,16 +62,16 @@ const getLabelByName = async (labelName) => {
     if (cachedLabels.hasOwnProperty(labelName)) {
         return cachedLabels[labelName];
     }
-    const allLabels = await exports.getAllLabelsByName(labelName);
+    const allLabels = await (0, exports.getAllLabelsByName)(labelName);
     return (cachedLabels[labelName] = allLabels.find(({ name }) => name === labelName));
 };
 exports.getLabelByName = getLabelByName;
 const addLabelByName = async (target, labelName) => {
-    const label = await exports.getLabelByName(labelName);
+    const label = await (0, exports.getLabelByName)(labelName);
     if (!label) {
         return;
     }
-    await exports.addLabel(target, label);
+    await (0, exports.addLabel)(target, label);
 };
 exports.addLabelByName = addLabelByName;
 const addLabel = async (target, label) => {
@@ -79,11 +79,11 @@ const addLabel = async (target, label) => {
 };
 exports.addLabel = addLabel;
 const removeLabelByName = async (target, labelName) => {
-    const label = await exports.getLabelByName(labelName);
+    const label = await (0, exports.getLabelByName)(labelName);
     if (!label) {
         return;
     }
-    await exports.removeLabel(target, label);
+    await (0, exports.removeLabel)(target, label);
 };
 exports.removeLabelByName = removeLabelByName;
 const removeLabel = async (target, label) => {
@@ -104,7 +104,7 @@ const doLabelMutation = async (target, label, mutationType) => {
             },
         },
     };
-    await octokit_1.octokit(json_to_graphql_query_1.jsonToGraphQLQuery(request));
+    await (0, octokit_1.octokit)((0, json_to_graphql_query_1.jsonToGraphQLQuery)(request));
 };
 
 
@@ -152,7 +152,7 @@ const labels_1 = __nccwpck_require__(3579);
     const res = regex.exec(title);
     if (!res) {
         if (label) {
-            await labels_1.addLabelByName({ id }, label);
+            await (0, labels_1.addLabelByName)({ id }, label);
         }
         core.setFailed("PR title doesn't match!");
         return;
@@ -160,7 +160,7 @@ const labels_1 = __nccwpck_require__(3579);
     Object.entries((_a = res.groups) !== null && _a !== void 0 ? _a : {}).forEach(([groupName, groupVal]) => core.setOutput(groupName, groupVal));
     const hasLabel = label && labels.some((curr) => curr.name === label);
     if (hasLabel) {
-        await labels_1.removeLabelByName({ id }, label);
+        await (0, labels_1.removeLabelByName)({ id }, label);
     }
 })();
 
@@ -2150,18 +2150,22 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 var request = __nccwpck_require__(6234);
 var universalUserAgent = __nccwpck_require__(5030);
 
-const VERSION = "4.6.4";
+const VERSION = "4.8.0";
 
-class GraphqlError extends Error {
-  constructor(request, response) {
-    const message = response.data.errors[0].message;
-    super(message);
-    Object.assign(this, response.data);
-    Object.assign(this, {
-      headers: response.headers
-    });
-    this.name = "GraphqlError";
-    this.request = request; // Maintains proper stack trace (only available on V8)
+function _buildMessageForResponseErrors(data) {
+  return `Request failed due to following response errors:\n` + data.errors.map(e => ` - ${e.message}`).join("\n");
+}
+
+class GraphqlResponseError extends Error {
+  constructor(request, headers, response) {
+    super(_buildMessageForResponseErrors(response));
+    this.request = request;
+    this.headers = headers;
+    this.response = response;
+    this.name = "GraphqlResponseError"; // Expose the errors and response data in their shorthand properties.
+
+    this.errors = response.errors;
+    this.data = response.data; // Maintains proper stack trace (only available on V8)
 
     /* istanbul ignore next */
 
@@ -2219,10 +2223,7 @@ function graphql(request, query, options) {
         headers[key] = response.headers[key];
       }
 
-      throw new GraphqlError(requestOptions, {
-        headers,
-        data: response.data
-      });
+      throw new GraphqlResponseError(requestOptions, headers, response.data);
     }
 
     return response.data.data;
@@ -2256,6 +2257,7 @@ function withCustomRequest(customRequest) {
   });
 }
 
+exports.GraphqlResponseError = GraphqlResponseError;
 exports.graphql = graphql$1;
 exports.withCustomRequest = withCustomRequest;
 //# sourceMappingURL=index.js.map
